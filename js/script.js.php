@@ -24,6 +24,10 @@ if(ini_get('file_uploads') == 1) echo "var uploadsenabled=true;\n";
 else echo "var uploadsenabled=false;\n";
 ?>
 
+function getTitleToDisplay(song){
+	return (song.artist=="" && song.title=="")?song.filename:song.artist + " - " + song.title;
+}
+
 var ajaxpath = window.location.href+"ajax.php"; //absolute url to ajax.php
 var ajaxpathrel = "ajax.php"; //relative path to ajax.php
 var lastcurrent = null; //last fileinfos for currently played song
@@ -165,8 +169,7 @@ function getCurrent() {
                         content="Error";
                         lastcurrent = null;
                     } else {
-                        content=    response.content.fileinfos.artist+" - "+
-                                    response.content.fileinfos.title+" (<span id='timespan'>"+formatLength(response.content.time)+"/"+formatLength(response.content.fileinfos.length)+"</span>)";
+                        content=    getTitleToDisplay(response.content.fileinfos)+" (<span id='timespan'>"+formatLength(response.content.time)+"/"+formatLength(response.content.fileinfos.length)+"</span>)";
                         percent = 100*response.content.time/response.content.fileinfos.length;
                         picture = response.content.fileinfos.picture;
                         if(lastcurrent==null || lastcurrent.fileinfos.id!=response.content.fileinfos.id) {
@@ -210,7 +213,7 @@ function getNext() {
                 if(response.content==null) {
                     content="Next: (none)";
                 } else {
-                    content="Als nächstes: "+response.content.artist+" - "+response.content.title+" "+formatLength(response.content.length);
+                    content="Next: "+getTitleToDisplay(response.content)+" "+formatLength(response.content.length);
                 }
             }
             $("#next").html(content);
@@ -326,7 +329,7 @@ function getMy() {
                     
                     for (index = 0; index < response.content.length; index++) {
                         entry = response.content[index];
-                        content+="<li class=myvote-"+entry.id+">"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+formatDate(entry.date)+")";
+                        content+="<li class=myvote-"+entry.id+">"+getTitleToDisplay(entry)+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+formatDate(entry.date)+")";
                         content+='<img class="votetrash" src="gfx/trash.png" alt="Stimme löschen" onclick="javascript:doRemoveVote('+entry.id+');"></li>';
                     }
                     content+="</ol>";
@@ -360,7 +363,7 @@ function getHigh() {
                         entry = response.content[index];
                         var st = "Stimmen";
                         if(entry.anzahl==1) st = "Stimme";
-                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+entry.anzahl+" "+st+") ";
+                        content+="<li>"+getTitleToDisplay(entry)+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+entry.anzahl+" "+st+") ";
                         if(entry.alreadyVoted) {
                             content+='<img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
                         } else {
@@ -401,7 +404,7 @@ function doSearch() {
                 } else {
                     for (index = 0; index < response.content.length; index++) {
                         entry = response.content[index];
-                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+') ';
+                        content+="<li>"+getTitleToDisplay(entry)+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+') ';
                         if(entry.alreadyVoted) {
                             content+='<img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
                         } else {
@@ -487,7 +490,7 @@ function getArtists(artistname) {
                     }
                 } else {
                     for(var i=0;i<response.content.files.length;i++) {
-                        content += '<li class="file">'+response.content.files[i].artist+": "+response.content.files[i].title;
+                        content += '<li class="file">'+getTitleToDisplay(response.content.files[i]);
                         
                         if(response.content.files[i].alreadyVoted) {
                             content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
@@ -531,7 +534,7 @@ function getAlbums(albumname) {
                     }
                 } else {
                     for(var i=0;i<response.content.files.length;i++) {
-                        content += '<li class="file">'+response.content.files[i].artist+": "+response.content.files[i].title;
+                        content += '<li class="file">'+getTitleToDisplay(response.content.files[i]);
                         
                         if(response.content.files[i].alreadyVoted) {
                             content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
@@ -578,7 +581,7 @@ function getPlaylists(name) {
                     }
                 } else {
                     for(var i=0;i<response.content.files.length;i++) {
-                        content += '<li class="file">'+response.content.files[i].artist+": "+response.content.files[i].title;
+                        content += '<li class="file">'+getTitleToDisplay(response.content.files[i]);
                         
                         if(response.content.files[i].alreadyVoted) {
                             content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
@@ -608,7 +611,7 @@ function getOftenPlaylists() {
             } else {
                 content += "<ol>";
                 for(var i=0;i<response.content.files.length;i++) {
-                    content += '<li class="file">'+response.content.files[i].count+": "+response.content.files[i].artist+": "+response.content.files[i].title;
+                    content += '<li class="file">'+response.content.files[i].count+": "+getTitleToDisplay(response.content.files[i]);
                     
                     if(response.content.files[i].alreadyVoted) {
                         content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
@@ -641,7 +644,7 @@ function getOftenVotes() {
             } else {
                 content += "<ol>";
                 for(var i=0;i<response.content.files.length;i++) {
-                    content += '<li class="file">'+response.content.files[i].count+": "+response.content.files[i].artist+": "+response.content.files[i].title;
+                    content += '<li class="file">'+response.content.files[i].count+": "+getTitleToDisplay(response.content.files[i]);
                     
                     if(response.content.files[i].alreadyVoted) {
                         content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
@@ -674,7 +677,7 @@ function getPlaylog() {
             } else {
                 content += "<ul>";
                 for(var i=0;i<response.content.files.length;i++) {
-                    content += '<li class="file">'+formatMinutes(response.content.files[i].date)+": "+response.content.files[i].artist+": "+response.content.files[i].title;
+                    content += '<li class="file">'+formatMinutes(response.content.files[i].date)+": "+getTitleToDisplay(response.content.files[i]);
                     
                     if(response.content.files[i].alreadyVoted) {
                         content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
@@ -754,7 +757,7 @@ function getDownloads() {
                 content += "<h2>Current Song</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.a.length;i++) {
-                    content += '<li class="file">'+response.content.a[i].artist+": "+response.content.a[i].title;
+                    content += '<li class="file">'+getTitleToDisplay(response.content.a[i]);
                     content+=' <img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownload('+response.content.a[i].id+');"></li>';
                     content+="</li>";
                 }
@@ -763,7 +766,7 @@ function getDownloads() {
                 content += "<h2>My matched songs</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.b.length;i++) {
-                    content += '<li class="file">'+response.content.b[i].artist+": "+response.content.b[i].title;
+                    content += '<li class="file">'+getTitleToDisplay(response.content.b[i]);
                     content+=' <img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownload('+response.content.b[i].id+');"></li>';
                     content+="</li>";
                 }
@@ -773,7 +776,7 @@ function getDownloads() {
                 content += "<h2>Highscore</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.c.length;i++) {
-                    content += '<li class="file">'+response.content.c[i].artist+": "+response.content.c[i].title;
+                    content += '<li class="file">'+getTitleToDisplay(response.content.c[i]);
                     content+=' <img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownload('+response.content.c[i].id+');"></li>';
                     content+="</li>";
                 }
@@ -783,7 +786,7 @@ function getDownloads() {
                 content += "<h2>Last played songs</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.d.length;i++) {
-                    content += '<li class="file">'+response.content.d[i].artist+": "+response.content.d[i].title;
+                    content += '<li class="file">'+getTitleToDisplay(response.content.d[i]);
                     content+=' <img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownload('+response.content.d[i].id+');"></li>';
                     content+="</li>";
                 }
@@ -810,7 +813,7 @@ function getOftenPlayed() {
             } else {
                 content += "<ol>";
                 for(var i=0;i<response.content.files.length;i++) {
-                    content += '<li class="file">'+response.content.files[i].count+": "+response.content.files[i].artist+": "+response.content.files[i].title;
+                    content += '<li class="file">'+response.content.files[i].count+": "+getTitleToDisplay(response.content.files[i]);
                     
                     if(response.content.files[i].alreadyVoted) {
                         content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
