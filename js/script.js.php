@@ -137,14 +137,14 @@ function formatDate(date) {
 //format Minutes
 function formatMinutes(min) {
     min = parseInt(min);
-    if(min==1) return "vor "+min+" Minute";
-    if(min<60) return "vor "+min+" Minuten";
+    if(min==1) return min+" minute ago";
+    if(min<60) return min+" Minutes ago";
     var hour = Math.floor(min/60);
-    if(hour==1) return "vor "+hour+" Stunde";
-    if(hour<24) return "vor "+hour+" Stunden";
+    if(hour==1) return hour+" hour ago";
+    if(hour<24) return hour+" hours ago";
     var days = Math.floor(hour/24);
-    if(days==1) return "vor "+days+" Tag";
-    return "vor "+days+" Tagen";
+    if(days==1) return days+" day ago";
+    return days+" days ago";
 }
 
 //update fileinfos for currently played song
@@ -157,7 +157,7 @@ function getCurrent() {
             var percent = 0;
             var picture = null;
             if(response.status!="success" || response.action!="mpdcurrent") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
                 lastcurrent = null;
             } else {
                 if(response.content.state!="stop") {
@@ -176,7 +176,7 @@ function getCurrent() {
                         tempposition = parseFloat(parseInt(response.content.time));
                     }
                 } else {
-                    content="(keine Wiedergabe)";
+                    content="(no song is playing)";
                     lastcurrent = null;
                 }
             }
@@ -205,10 +205,10 @@ function getNext() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="getnextsong") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
                 if(response.content==null) {
-                    content="Als nächstes: (keins)";
+                    content="Next: (none)";
                 } else {
                     content="Als nächstes: "+response.content.artist+" - "+response.content.title+" "+formatLength(response.content.length);
                 }
@@ -229,7 +229,7 @@ function doVote(id) {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="vote") {
-                alert("Es trat ein Fehler auf!");
+                alert("There was an error!");
             } else {
                 //loadTab();
                 getNext();
@@ -256,7 +256,7 @@ function doVoteSkip() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="vote-skip-action") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
                 loadTab();
             }
@@ -277,7 +277,7 @@ function doRemoveVote(id) {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="remove-my-vote") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
                 var myclass = ".myvote-"+response.content;
                 
@@ -317,7 +317,7 @@ function getMy() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="getmyvotes") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
                 if(response.content.length==0) {
                     content="Keine Elemente!";
@@ -349,10 +349,10 @@ function getHigh() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="showhighscore") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
                 if(response.content.length==0) {
-                    content="Keine Elemente!";
+                    content="No Elements!";
                 } else {
                     content+="<ol>";
                     
@@ -383,7 +383,7 @@ function doSearch() {
     var textVal = $("#search-text").val();
     if(textVal.length==0) return;
     if(textVal.length<3) {
-        $("#search > ul").html("Bitte mindestens 3 Zeichen eingeben!");  
+        $("#search > ul").html("Please enter at least 3 characters!");  
         return;
     }
     $("#search > ul").html(loading);
@@ -394,10 +394,10 @@ function doSearch() {
             var content = "";
             
             if(response.status!="success" || response.action!="search") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
                 if(response.content.length==0) {
-                    content="Keine Elemente!";
+                    content="No Elements!";
                 } else {
                     for (index = 0; index < response.content.length; index++) {
                         entry = response.content[index];
@@ -426,14 +426,14 @@ function getFolders(folderid) {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="browse-folders") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
                 content += '<span class="current">'+response.content.path+"</span>";
                 content += "<ul>";
                 
                 if(response.content.this!="ROOT") {
-                    content += '<li class="goup" onclick="javascript:getFolders(-1);">(nach ganz oben)</li>';
-                    content += '<li class="goup" onclick="javascript:getFolders('+response.content.this.parentid+');">(eins nach oben)</li>';
+                    content += '<li class="goup" onclick="javascript:getFolders(-1);">(to the very top)</li>';
+                    content += '<li class="goup" onclick="javascript:getFolders('+response.content.this.parentid+');">(one up)</li>';
                 }
                 
                 for(var i=0;i<response.content.folders.length;i++) {
@@ -471,14 +471,14 @@ function getArtists(artistname) {
             var response = JSON.parse(result);
             var content = "";
             if(response.status!="success" || response.action!="browse-artists") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
         
                 if(response.content.name!="ROOT") content += '<span class="current">'+response.content.name+"</span>";
                 content += "<ul>";
                 
                 if(response.content.name!="ROOT") {
-                    content += '<li class="goup" onclick="javascript:getArtists(\'ROOT\');">(zurück)</li>';
+                    content += '<li class="goup" onclick="javascript:getArtists(\'ROOT\');">(back)</li>';
                 }
                 
                 if(response.content.name=="ROOT") {
@@ -515,14 +515,14 @@ function getAlbums(albumname) {
             var response = JSON.parse(result);
             var content = "";
             if(response.status!="success" || response.action!="browse-albums") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
         
                 if(response.content.name!="ROOT") content += '<span class="current">'+response.content.name+"</span>";
                 content += "<ul>";
                 
                 if(response.content.name!="ROOT") {
-                    content += '<li class="goup" onclick="javascript:getAlbums(\'ROOT\');">(zurück)</li>';
+                    content += '<li class="goup" onclick="javascript:getAlbums(\'ROOT\');">(back)</li>';
                 }
                 
                 if(response.content.name=="ROOT") {
@@ -559,7 +559,7 @@ function getPlaylists(name) {
             var response = JSON.parse(result);
             var content = "";
             if(response.status!="success" || response.action!="browse-playlists") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
         
                 if(response.content.name!="ROOT") {
@@ -569,7 +569,7 @@ function getPlaylists(name) {
                 content += "<ul>";
                 
                 if(response.content.name!="ROOT") {
-                    content += '<li class="goup" onclick="javascript:getPlaylists(\'ROOT\');">(zurück)</li>';
+                    content += '<li class="goup" onclick="javascript:getPlaylists(\'ROOT\');">(back)</li>';
                 }
                 
                 if(response.content.name=="ROOT") {
@@ -604,7 +604,7 @@ function getOftenPlaylists() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="browse-often-playlists") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
                 content += "<ol>";
                 for(var i=0;i<response.content.files.length;i++) {
@@ -637,7 +637,7 @@ function getOftenVotes() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="browse-often-votes") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
                 content += "<ol>";
                 for(var i=0;i<response.content.files.length;i++) {
@@ -670,7 +670,7 @@ function getPlaylog() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="browse-playlog") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
                 content += "<ul>";
                 for(var i=0;i<response.content.files.length;i++) {
@@ -703,7 +703,7 @@ function getVoteskip() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="vote-skip-check") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
                 if(response.content==0) {
                     content+='<img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVoteSkip();">';
@@ -725,12 +725,12 @@ function getVoteskip() {
 
 function getUploadForm() {
     if(uploadsenabled) {
-        var content = 'Es werden nur mp3 Dateien akzeptiert!'+
+        var content = 'There are only mp3 files accepted !'+
         '<form enctype="multipart/form-data" action="ajax.php?action=upload-file" method="post">'+
         '<input type="hidden" name="max_file_size" value="'+maxsize+'">'+
         '<input type="hidden" name="abgeschickt" value="ja">'+
-        'Datei auswählen: <input name="thefile[]" type="file" multiple="multiple" style="border: 1px solid #555;"><br />'+
-        '<input type="submit" value="senden">'+
+        'Choose a file: <input name="thefile[]" type="file" multiple="multiple" style="border: 1px solid #555;"><br />'+
+        '<input type="submit" value="send">'+
         '<!--<input name="abbrechen" type="button" value="Abbrechen" id="abbrechen"><br />'+
         '<progress max="1" value="0" id="fortschritt"></progress>'+
         '<p id="fortschritt_txt"></p>-->'+
@@ -749,9 +749,9 @@ function getDownloads() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="download-file") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
-                content += "<h2>Derzeitiges Lied</h2>";
+                content += "<h2>Current Song</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.a.length;i++) {
                     content += '<li class="file">'+response.content.a[i].artist+": "+response.content.a[i].title;
@@ -760,7 +760,7 @@ function getDownloads() {
                 }
                 content += "</ul>";
                 
-                content += "<h2>Von mir abgestimmte Lieder</h2>";
+                content += "<h2>My matched songs</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.b.length;i++) {
                     content += '<li class="file">'+response.content.b[i].artist+": "+response.content.b[i].title;
@@ -780,7 +780,7 @@ function getDownloads() {
                 content += "</ul>";
                 
                 
-                content += "<h2>zuletzt gespielte Lieder</h2>";
+                content += "<h2>Last played songs</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.d.length;i++) {
                     content += '<li class="file">'+response.content.d[i].artist+": "+response.content.d[i].title;
@@ -806,7 +806,7 @@ function getOftenPlayed() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="browse-often-played") {
-                content="Es trat ein Fehler auf!";
+                content="There was an error!";
             } else {
                 content += "<ol>";
                 for(var i=0;i<response.content.files.length;i++) {

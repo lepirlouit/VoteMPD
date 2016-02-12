@@ -258,6 +258,7 @@ function getFileinfosforfilepath($path) {
     $folders = explode("/",dirname($path));
     $curDir = -1;
     foreach($folders as $f) {
+
         $stmt = $GLOBALS["db"]->prepare("SELECT id,picture FROM folders WHERE parentid=:p AND foldername=:f");
         if($stmt->execute(array(":p" => $curDir,":f" => $f))) {
             if($row = $stmt->fetchObject()) $curDir=$row->id;
@@ -1021,7 +1022,7 @@ function doUploadFile() {
         $echohtml_content.= "<h2>".$_FILES['thefile']['name'][$i]."</h2>";
         if(!($_FILES['thefile']['error'][$i]===0))      $echohtml_content.= "Errorcode: ".$_FILES['thefile']['error'][$i]." http://php.net/manual/de/features.file-upload.errors.php<br />";
         if(!isset($_FILES['thefile']['tmp_name'][$i])) 	{$echohtml_content.= "Fehler: kein tmp_filename"; break; }
-        if($_FILES['thefile']['tmp_name'][$i]=="") 		{$echohtml_content.= "Fehler: tmp_filename ist leer"; break; } //[tmp_name] => /home/www/sp01_62/phptmp/phpLqU14d
+        if($_FILES['thefile']['tmp_name'][$i]=="") 		{$echohtml_content.= "Error: tmp_filename is empty"; break; } //[tmp_name] => /home/www/sp01_62/phptmp/phpLqU14d
         if(!isset($_FILES['thefile']['name'][$i])) 		{$echohtml_content.= "Fehler: kein name"; break; } //name] => lircd.bak
         if($_FILES['thefile']['name'][$i]=="") 		    {$echohtml_content.= "Fehler: name ist leer"; break; }
         if(!isset($_FILES['thefile']['error'][$i])) 	{$echohtml_content.= "Fehler: kein errorcode"; break; }
@@ -1030,7 +1031,7 @@ function doUploadFile() {
         $endunga=strrchr($_FILES['thefile']['name'][$i], ".");
         $endunga=str_replace(".", "", $endunga);
         $endunga=strtolower($endunga);
-        if ($endunga!="mp3") { $echohtml_content.="Fehler: Dateiendung nicht akzeptiert (.".$endunga.")<br>"; break; }
+        if ($endunga!="mp3") { $echohtml_content.="Error: not accepted file extension (.".$endunga.")<br>"; break; }
 
         $date=date("Y.m.d_H.i.s");
         $file_name=$date."_".preg_replace("/[^A-Za-z0-9._ ]/", '', $_FILES['thefile']['name'][$i]);
@@ -1038,15 +1039,15 @@ function doUploadFile() {
         $file_name=str_replace(" ","_",$file_name);
         $file_path_rel=$GLOBALS["pathuploads"]."/".$file_name;
         $file_path_abs=$GLOBALS["path"]."/".$file_path_rel;
-        if (file_exists($file_path_abs)) { $echohtml_content.= "Fehler: datei existiert bereits<br>"; break; }
+        if (file_exists($file_path_abs)) { $echohtml_content.= "Error: File already exists<br>"; break; }
         if(move_uploaded_file($_FILES['thefile']['tmp_name'][$i],$file_path_abs)){
-            $echohtml_content.="OK<br>Datei hei&szlig;t: ".$file_name."<br>";
+            $echohtml_content.="OK<br>File is : ".$file_name."<br>";
             mpdScan($file_path_rel);
             $foldernum = getFolderidforFolderpath($GLOBALS["pathuploads"]);
             insertFileInDb($foldernum,$file_path_abs,false);
-        } else $echohtml_content.="Fehler: beim kopieren";
+        } else $echohtml_content.="Error: Unable to Copy";
     }
-    $echohtml_content.="<br /><br /><a href=\"/\">zur&uuml;ck</a>";
+    $echohtml_content.="<br /><br /><a href=\"/\">back</a>";
     echo $echohtml_content;
 }
 
