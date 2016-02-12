@@ -361,9 +361,9 @@ function getHigh() {
                     
                     for (index = 0; index < response.content.length; index++) {
                         entry = response.content[index];
-                        var st = "Stimmen";
-                        if(entry.anzahl==1) st = "Stimme";
-                        content+="<li>"+getTitleToDisplay(entry)+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+entry.anzahl+" "+st+") ";
+                        var st = "Votes";
+                        if(entry.anzahl==1) st = "Vote";
+                        content+="<li>"+getTitleToDisplay(entry)+" ("+formatLength(entry.length)+", "+formatBytes(entry.size)+", "+entry.anzahl+" "+st+") ";
                         if(entry.alreadyVoted) {
                             content+='<img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
                         } else {
